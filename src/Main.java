@@ -2,56 +2,68 @@ import java.util.Random;
 
 public class Main {
 
-	static boolean checkDiag(char[][] board) {
+	static int checkDiag(char[][] board) {
 		String s = "";
 		for (int i = 0; i < board.length; i++) {
 			s += board[i][i];
 		}
 
-		if (s.equals("XXX") || s.equals("OOO")) {
-			return true;
+		if (s.equals("XXX")) {
+			return 2;
 		}
-		return false;
+		if (s.equals("OOO")) {
+			return 1;
+		}
+		return 0;
 	}
 
-	static boolean checkAntidiag(char[][] board) {
+	static int checkAntidiag(char[][] board) {
 		String s = "";
 		for (int i = 0; i < board.length; i++) {
 			s += board[i][3 - 1 - i];
 		}
 
-		if (s.equals("XXX") || s.equals("OOO")) {
-			return true;
+		if (s.equals("XXX")) {
+			return 2;
 		}
-		return false;
+		if (s.equals("OOO")) {
+			return 1;
+		}
+		return 0;
 	}
 
-	static boolean checkRow(char[][] board) {
+	static int checkRow(char[][] board) {
 		for (int i = 0; i < board.length; i++) {
 			String s = "";
 			for (int j = 0; j < board[0].length; j++) {
 				s += board[i][j];
 			}
-			if (s.equals("XXX") || s.equals("OOO")) {
-				return true;
+			if (s.equals("XXX")) {
+				return 2;
+			}
+			if (s.equals("OOO")) {
+				return 1;
 			}
 		}
 
-		return false;
+		return 0;
 	}
 
-	static boolean checkCol(char[][] board) {
+	static int checkCol(char[][] board) {
 		for (int i = 0; i < board.length; i++) {
 			String s = "";
 			for (int j = 0; j < board[0].length; j++) {
 				s += board[j][i];
 			}
-			if (s.equals("XXX") || s.equals("OOO")) {
-				return true;
+			if (s.equals("XXX")) {
+				return 2;
+			}
+			if (s.equals("OOO")) {
+				return 1;
 			}
 		}
+		return 0;
 
-		return false;
 	}
 
 	public static void main(String args[]) {
@@ -59,8 +71,23 @@ public class Main {
 		char[][] board = new char[3][3];
 		Random rand = new Random();
 
-		for (int i = 0; i < board.length * board[0].length; i++) {
-			board[i / 3][i % 3] = rand.nextBoolean() ? 'X' : 'O';
+		int xamt = 0;
+		int oamt = 0;
+		boolean done = true;
+		while (done) {
+			xamt = 0;
+			oamt = 0;
+			for (int i = 0; i < board.length * board[0].length; i++) {
+				char code = rand.nextBoolean() ? 'X' : 'O';
+				xamt += (code == 'X') ? 1 : 0;
+				oamt += (code == 'X') ? 0 : 1;
+				board[i / 3][i % 3] = code;
+			}
+
+			if (xamt <= 5 && oamt <= 5) {
+				done = false;
+			}
+
 		}
 
 		for (int i = 0; i < board.length; i++) {
@@ -71,12 +98,20 @@ public class Main {
 			System.out.println();
 		}
 
-		if (checkDiag(board) ||
-				checkAntidiag(board) ||
-				checkRow(board) ||
-				checkCol(board)) {
-			System.out.println("You Win");
+		if (checkDiag(board) == 2 ||
+				checkAntidiag(board) == 2 ||
+				checkRow(board) == 2 ||
+				checkCol(board) == 2) {
+			System.out.println("X Wins");
 			return;
+		}
+		if (checkDiag(board) == 1 ||
+				checkAntidiag(board) == 1 ||
+				checkRow(board) == 1 ||
+				checkCol(board) == 1) {
+			System.out.println("O Wins");
+			return;
+
 		}
 
 		System.out.println("You Lose");
